@@ -24,7 +24,6 @@ class ListCreateProductView(generics.ListCreateAPIView):
             queryset = queryset.filter(price__gte=query_params['price'])
         return queryset
 
-
 class RetrieveUpdateDestroyProductView(generics.RetrieveUpdateDestroyAPIView):
     """
     Provides a get put patch delete method handler.

@@ -95,11 +95,69 @@ class App extends Component {
     });
   }
 
+  login = () => {
+    const {
+      username,
+      password,
+    } = this.state.user;
+
+    axios.get('/api/auth', {
+      params: {
+        username,
+        password
+      }
+    }).then(res => {
+      if (res.status === 200) {
+        const { token, user } = res.data;
+      }
+    })
+  }
+
   render() {
     const {
       title,
-      price
+      price,
+      user: {
+        authorized,
+        username,
+        password
+      }
     } = this.state;
+
+    if (!authorized) {
+      return (
+        <div>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => {
+              this.setState({
+                user: {
+                  ...this.state.user,
+                  username: e.target.value
+                }
+              })
+            }}
+          />
+
+          <input
+            type="text"
+            placeholder="Username"
+            value={password}
+            onChange={(e) => {
+              this.setState({
+                user: {
+                  ...this.state.user,
+                  password: e.target.value
+                }
+              })
+            }}
+          />
+          <button onClick={this.login}>Login</button>
+        </div>
+      )
+    }
 
     return (
       <div className="todo">
