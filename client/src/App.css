@@ -1,0 +1,44 @@
+.todo {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.todo-ul {
+  list-style: none;
+  width: 100%;
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+.todo-item {
+  width: 100%;
+  background: #CCC;
+  border-bottom: 1px solid #333;
+  height: 40px;
+  text-align: center;
+  float: left;
+  line-height: 40px;
+}
+
+.todo-title {
+  float: left;
+  margin-left: 10px;
+}
+
+.todo-delete {
+  float: right;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.create-todo-box {
+  width: 100%;
+  float: left;
+}
+
+.todo-input {
+  width: 100%;
+  margin-top: 10px;
+  display: block;
+}
