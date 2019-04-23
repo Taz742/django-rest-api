@@ -10,16 +10,22 @@ class App extends Component {
     user: {
       authorized: false,
       token: '',
-      username: '',
-      password: '',
+      username: 'admin',
+      password: 'admin123',
       id: -1,
     }
   }
 
   componentDidMount() {
+    // this.getProducts();
+  }
+
+  getProducts = () => {
     axios.get('/api/products/', {
       params: {
         price: 0
+      }, headers: {
+        Authorization: `Token ${this.state.user.token}`
       }
     }).then(res => {
       this.setState({
@@ -59,8 +65,11 @@ class App extends Component {
           fake_field: 'nwfff'
         }
       }
-    }
-    ).then(res => {
+    }, {
+      headers: {
+        Authorization: `Token ${this.state.user.token}`
+      }
+    }).then(res => {
       if (res.status === 201)
         this.setState({
           products: [...this.state.products, res.data]
@@ -101,14 +110,19 @@ class App extends Component {
       password,
     } = this.state.user;
 
-    axios.get('/api/auth', {
-      params: {
+    axios.post('/api/auth/', {
         username,
         password
-      }
     }).then(res => {
       if (res.status === 200) {
         const { token, user } = res.data;
+        this.setState({
+          user: {
+            ...this.state.user,
+            authorized: true,
+            token: token
+          }
+        }, this.getProducts);
       }
     })
   }

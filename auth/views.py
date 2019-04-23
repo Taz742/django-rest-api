@@ -1,39 +1,58 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password
 
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework import exceptions
+
+from users.serializers import UserSerializer
+from .serializers import LoginSerializer
 
 
 # Create your views here.
-class AuthenticationView(APIView):
+class LoginView(GenericAPIView):
     """
-    Provides authentication
+    Provides login
     """
 
     permission_classes = [AllowAny]
+    serializer_class = LoginSerializer
 
-    def get(self, request):
-        username = request.query_params.get('username')
-        password = request.query_params.get('password')
+    def get_response(self):
+        user = UserSerializer(self.user)
+        data = {
+            'user': user.data,
+            'token': self.token.key
+        } 
+        
+        return Response(data=data, status=status.HTTP_200_OK)
 
-        if username is None or password is None:
-            return Response('Invalid data: username or password does not provided', status=status.HTTP_400_BAD_REQUEST)
+    def login(self):
+        validated_data = self.serializer.validated_data
+        username = validated_data.get('username')
+        password = validated_data.get('password')
 
         try:
             user = User.objects.get(username=username)
             if check_password(password, user.password):
-                token, created = Token.objects.get_or_create(user=user)
-                return Response(token.key, status=status.HTTP_200_OK)
-            
-            raise Exception()
+                token, crated = Token.objects.get_or_create(user=user)
+                self.user = user
+                self.token = token
+            else:
+                raise Exception()
         except Exception as e:
-            print(e)
-            return Response('Invalid username/password', status=status.HTTP_401_UNAUTHORIZED)
-    
-    def post(self, request):
-        pass
+            raise exceptions.AuthenticationFailed('Invalid username or password')
+
+    def post(self, request, *args, **kwargs):
+        self.request = request
+        self.serializer = self.get_serializer(data=self.request.data)
+        self.serializer.is_valid(raise_exception=True)
+        
+        self.login()
+
+        return self.get_response()
