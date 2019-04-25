@@ -15,6 +15,7 @@ from .serializers import LoginSerializer
 
 
 # Create your views here.
+
 class LoginView(GenericAPIView):
     """
     Provides login
@@ -40,13 +41,13 @@ class LoginView(GenericAPIView):
         try:
             user = User.objects.get(username=username)
             if check_password(password, user.password):
-                token, crated = Token.objects.get_or_create(user=user)
+                token, created = Token.objects.get_or_create(user=user)
                 self.user = user
                 self.token = token
             else:
                 raise Exception()
         except Exception as e:
-            raise exceptions.AuthenticationFailed('Invalid username or password')
+            raise exceptions.AuthenticationFailed({'detail': 'Invalid username or password'})
 
     def post(self, request, *args, **kwargs):
         self.request = request
@@ -56,3 +57,6 @@ class LoginView(GenericAPIView):
         self.login()
 
         return self.get_response()
+
+class RegistrationView(GenericAPIView):
+    pass

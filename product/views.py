@@ -5,7 +5,18 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, I
 from rest_framework.response import Response
 from rest_framework.views import status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.pagination import PageNumberPagination
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = 'page_size'
+
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'results': data
+        })
 
 class ListCreateProductView(generics.ListCreateAPIView):
     """
@@ -15,6 +26,7 @@ class ListCreateProductView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         queryset = super(ListCreateProductView, self).get_queryset()
@@ -33,6 +45,6 @@ class RetrieveUpdateDestroyProductView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JSONWebTokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
