@@ -1,8 +1,45 @@
+// @flow
+
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 
-class App extends Component {
+type UserProfile = {
+  authorized: boolean,
+  token: string,
+  username: string,
+  password: string,
+  id: number,
+};
+
+type FakeChild = {
+  id: number,
+  fake_field: string,
+  product_detail: number,
+}
+
+type ProductDetail = {
+  id: number,
+  description: string,
+  fake_child: FakeChild
+}
+
+type ProductProfile = {
+  created: Date,
+  id: number,
+  price: number,
+  title: string,
+  detail: ProductDetail
+}
+
+type State = {
+  products: Array<ProductProfile>,
+  title: string,
+  price: number,
+  user: UserProfile,
+};
+
+class App extends Component<{}, State> {
   state = {
     products: [],
     title: '',
@@ -29,12 +66,12 @@ class App extends Component {
       }
     }).then(res => {
       this.setState({
-        products: res.data
+        products: res.data.results,
       });
     });
   }
 
-  handleChange = (key, value) => {
+  handleChange = (key: string, value: string | number) => {
     this.setState({
       [key]: value
     });
@@ -77,7 +114,7 @@ class App extends Component {
     });
   }
 
-  deleteProduct = (id) => {
+  deleteProduct = (id: number) => {
     axios.delete(`/api/products/${id}`).then(res => {
       if (res.status === 204)
         this.setState({
@@ -86,7 +123,7 @@ class App extends Component {
     });
   }
 
-  updateProduct = (id) => {
+  updateProduct = (id: number) => {
     axios.put(`/api/products/${id}/`, {
       title: 'title',
       price: 1,
@@ -110,9 +147,9 @@ class App extends Component {
       password,
     } = this.state.user;
 
-    axios.post('/api/auth/', {
-        username,
-        password
+    axios.post('/api/auth/login/', {
+      username,
+      password
     }).then(res => {
       if (res.status === 200) {
         const { token, user } = res.data;
@@ -179,7 +216,7 @@ class App extends Component {
           {this.state.products.map((product) => {
             return (
               <li key={product.id} className="todo-item" >
-                <span className="todo-title">{`Title-${product.title}/ Price-${product.price}/ Created-${product.created}`}</span>
+                <span className="todo-title">{`Title-${product.title}/ Price-${product.price}/ Created-${product.created.toString()}`}</span>
                 <span className="todo-delete" onClick={() => this.deleteProduct(product.id)}>ClickToDelete</span>
                 <span className="todo-delete" onClick={() => this.updateProduct(product.id)}>ClickToUpdate</span>
               </li>
