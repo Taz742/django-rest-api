@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import axios from 'axios';
+import type { $AxiosXHR } from 'axios';
 import './App.css';
 
 type UserProfile = {
@@ -39,6 +40,14 @@ type State = {
   user: UserProfile,
 };
 
+type AllProductsResponse = {
+  status: number,
+  data: {
+    count: number,
+    results: Array<ProductProfile>
+  }
+}
+
 class App extends Component<{}, State> {
   state = {
     products: [],
@@ -53,25 +62,28 @@ class App extends Component<{}, State> {
     }
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     // this.getProducts();
+    this.login();
   }
 
-  getProducts = () => {
+  getProducts = (): void => {
     axios.get('/api/products/', {
       params: {
         price: 0
       }, headers: {
         Authorization: `Token ${this.state.user.token}`
       }
-    }).then(res => {
-      this.setState({
-        products: res.data.results,
-      });
+    }).then((res: AllProductsResponse) => {
+      if (res.status === 200) {
+        this.setState({
+          products: res.data.results,
+        });
+      }
     });
   }
 
-  handleChange = (key: string, value: string | number) => {
+  handleChange = (key: string, value: string | number): void => {
     this.setState({
       [key]: value
     });
@@ -84,38 +96,42 @@ class App extends Component<{}, State> {
     } = this.state;
 
     axios.post('/api/products/',
-    // {
-    //   first_name: 'name',
-    //   last_name: 'lastname',
-    //   instrument: 'instrument',
-    //   album_musician: [{
-    //     name: 'album_name',
-    //     num_stars: 5,
-    //   }]
-    // }
-    {
-      title: 'title',
-      price: 13,
-      detail: {
-        description: 'desc',
-        fake_child: {
-          fake_field: 'nwfff'
+      // {
+      //   first_name: 'name',
+      //   last_name: 'lastname',
+      //   instrument: 'instrument',
+      //   album_musician: [{
+      //     name: 'album_name',
+      //     num_stars: 5,
+      //   }]
+      // }
+      {
+        title: 'title',
+        price: 13,
+        detail: {
+          description: 'desc',
+          fake_child: {
+            fake_field: 'nwfff'
+          }
         }
-      }
-    }, {
+      }, {
+        headers: {
+          Authorization: `Token ${this.state.user.token}`
+        }
+      }).then(res => {
+        if (res.status === 201)
+          this.setState({
+            products: [...this.state.products, res.data]
+          });
+      });
+  }
+
+  deleteProduct = (id: number): void => {
+    axios.delete(`/api/products/${id}`, {
       headers: {
         Authorization: `Token ${this.state.user.token}`
       }
-    }).then(res => {
-      if (res.status === 201)
-        this.setState({
-          products: [...this.state.products, res.data]
-        });
-    });
-  }
-
-  deleteProduct = (id: number) => {
-    axios.delete(`/api/products/${id}`).then(res => {
+    }).then((res: any) => {
       if (res.status === 204)
         this.setState({
           products: this.state.products.filter((product) => product.id !== id)
@@ -123,7 +139,7 @@ class App extends Component<{}, State> {
     });
   }
 
-  updateProduct = (id: number) => {
+  updateProduct = (id: number): void => {
     axios.put(`/api/products/${id}/`, {
       title: 'title',
       price: 1,
@@ -141,7 +157,7 @@ class App extends Component<{}, State> {
     });
   }
 
-  login = () => {
+  login = (): void => {
     const {
       username,
       password,

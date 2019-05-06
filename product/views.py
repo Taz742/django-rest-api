@@ -45,6 +45,6 @@ class RetrieveUpdateDestroyProductView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [JSONWebTokenAuthentication]
+    authentication_classes = [TokenAuthentication, IsAdminUser]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
