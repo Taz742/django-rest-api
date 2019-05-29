@@ -2,7 +2,18 @@
 
 import React, { Component } from 'react';
 import axios from 'axios';
-import type { $AxiosXHR } from 'axios';
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  ListGroupItem,
+  Input,
+  Form,
+  FormGroup,
+  Label
+} from 'reactstrap';
 import './App.css';
 
 type UserProfile = {
@@ -38,6 +49,8 @@ type State = {
   title: string,
   price: number,
   user: UserProfile,
+  activeProductIndex: number,
+  images: string,
 };
 
 type AllProductsResponse = {
@@ -53,13 +66,15 @@ class App extends Component<{}, State> {
     products: [],
     title: '',
     price: 0,
+    images: '',
     user: {
       authorized: false,
       token: '',
-      username: 'admin',
+      username: 'taz742',
       password: 'admin123',
       id: -1,
-    }
+    },
+    activeProductIndex: -1,
   }
 
   componentDidMount(): void {
@@ -96,18 +111,9 @@ class App extends Component<{}, State> {
     } = this.state;
 
     axios.post('/api/products/',
-      // {
-      //   first_name: 'name',
-      //   last_name: 'lastname',
-      //   instrument: 'instrument',
-      //   album_musician: [{
-      //     name: 'album_name',
-      //     num_stars: 5,
-      //   }]
-      // }
       {
-        title: 'title',
-        price: 13,
+        title,
+        price,
         detail: {
           description: 'desc',
           fake_child: {
@@ -172,12 +178,18 @@ class App extends Component<{}, State> {
         this.setState({
           user: {
             ...this.state.user,
+            ...user,
             authorized: true,
             token: token
           }
         }, this.getProducts);
       }
     })
+  }
+
+  selectImage = (e: any) => {
+    const image: any = e.target.files[0];
+    console.log(image);
   }
 
   render() {
@@ -227,42 +239,64 @@ class App extends Component<{}, State> {
     }
 
     return (
-      <div className="todo">
-        <ul className="todo-ul">
-          {this.state.products.map((product) => {
-            return (
-              <li key={product.id} className="todo-item" >
-                <span className="todo-title">{`Title-${product.title}/ Price-${product.price}/ Created-${product.created.toString()}`}</span>
-                <span className="todo-delete" onClick={() => this.deleteProduct(product.id)}>ClickToDelete</span>
-                <span className="todo-delete" onClick={() => this.updateProduct(product.id)}>ClickToUpdate</span>
-              </li>
-            )
-          })}
-        </ul>
+      <Container style={{marginTop: 10}}>
+        <Row>
+          <Col>
+            <ListGroup>
+              {this.state.products.map((product) => {
+                return (
+                  <ListGroupItem
+                    active={this.state.activeProductIndex === product.id}
+                    onClick={() => {
+                      this.setState({
+                        activeProductIndex: product.id
+                      });
+                    }}
+                    key={product.id}
+                  >
+                    <span className="float-left">{`Title-${product.title}/ Price-${product.price}/ Created-${product.created.toString()}`}</span>
+                    <span className="float-right" onClick={() => this.deleteProduct(product.id)}>ClickToDelete</span>
+                    <span className="float-right" onClick={() => this.updateProduct(product.id)}>ClickToUpdate</span>
+                  </ListGroupItem>
+                )
+              })}
+            </ListGroup>
+          </Col>
+        </Row>
 
-        <div className="create-todo-box">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => {
-              this.handleChange('title', e.target.value);
-            }}
-            className="todo-input"
-            placeholder="Title"
-          />
+        <Form style={{marginTop: 10}} className="margintop" >
+          <FormGroup>
+            <Label for="exampleEmail">Title</Label>
+            <Input
+              type="text"
+              name="title"
+              id="exampleEmail"
+              placeholder="Enter title here"
+              value={title}
+              onChange={(e) => {
+                this.handleChange('title', e.target.value);
+              }}
+            />
+          </FormGroup>
 
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => {
-              this.handleChange('price', e.target.value);
-            }}
-            className="todo-input"
-          />
+          <FormGroup>
+            <Label for="exampleEmail">Price</Label>
+            <Input
+              type="number"
+              name="price"
+              id="exampleEmail"
+              placeholder="Enter price"
+              value={price}
+              onChange={(e) => {
+                this.handleChange('price', e.target.value);
+              }}
+            />
+          </FormGroup>
+          <input type="file" onChange={this.selectImage}/>
 
-          <button onClick={this.createProduct}>Create</button>
-        </div>
-      </div>
+          <Button onClick={this.createProduct}>Create</Button>
+        </Form>
+      </Container>
     );
   }
 }

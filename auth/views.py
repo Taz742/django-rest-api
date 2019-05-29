@@ -12,6 +12,7 @@ from rest_framework import exceptions
 
 from users.serializers import UserSerializer
 from .serializers import LoginSerializer
+from product.tasks import send_email_task
 
 
 # Create your views here.
@@ -55,6 +56,7 @@ class LoginView(GenericAPIView):
         self.serializer.is_valid(raise_exception=True)
         
         self.login()
+        # send_email_task.delay()
 
         return self.get_response()
 

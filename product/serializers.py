@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import ProductModel, ProductDetailModel, FakeDetailChild
 from django.db import transaction
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
 def do_something():
