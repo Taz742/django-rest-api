@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import ProductModel
+from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -7,6 +7,7 @@ from rest_framework.views import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework.parsers import FileUploadParser
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 50
@@ -22,11 +23,12 @@ class ListCreateProductView(generics.ListCreateAPIView):
     """
     Provides a get and post method handler.
     """
-    queryset = ProductModel.objects.all()
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
     pagination_class = StandardResultsSetPagination
+    parser_class = (FileUploadParser,)
 
     def get_queryset(self):
         queryset = super(ListCreateProductView, self).get_queryset()
@@ -38,12 +40,16 @@ class ListCreateProductView(generics.ListCreateAPIView):
     def list(self, request):
         print(request.user)
         return super(ListCreateProductView, self).list(request)
+    
+    def create(self, request):
+        print(request.data)
+        return super(ListCreateProductView, self).create(request)
 
 class RetrieveUpdateDestroyProductView(generics.RetrieveUpdateDestroyAPIView):
     """
     Provides a get put patch delete method handler.
     """
-    queryset = ProductModel.objects.all()
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [TokenAuthentication, IsAdminUser]
     permission_classes = [IsAuthenticatedOrReadOnly]
