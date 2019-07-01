@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import ListCreateCarsView
+from .views import ListCarsView, ListOfCurrentlyLogedUserCarsView
 
 
 urlpatterns = [
-    path('cars/', ListCreateCarsView.as_view(), name="list-of-cars"),
+    path('', ListCarsView.as_view(), name="list-of-cars"),
+    path('my/', ListOfCurrentlyLogedUserCarsView.as_view(), name="list-of-currently-loged-user-cars"),
 ]

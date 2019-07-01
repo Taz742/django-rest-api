@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, withRouter } from 'react-router-dom';
 
 // Externals
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 // Material helpers
@@ -57,14 +56,87 @@ const StyledBadge = withStyles((theme) => ({
     },
 }))(Badge);
 
+const Foo = React.forwardRef((props, ref) => {
+    return (
+        <div>
+            <NavLink {...props} ref={ref} />
+        </div>
+    )
+});
+
 class Sidebar extends Component {
     render() {
-        const { classes, className } = this.props;
+        const {
+            classes,
+            authenticationReducer
+        } = this.props;
 
-        const rootClassName = classNames(classes.root, className);
+        const getProfile = () => {
+            return (
+                <>
+                    <div className={classes.profile}>
+                        <Link to="/account">
+                            <Avatar
+                                alt="Roman Kutepov"
+                                className={classes.avatar}
+                                src="https://ca.slack-edge.com/T88TYEF4L-UAXE19KS9-bb5e12c43b7f-512"
+                            />
+                        </Link>
+                        <Typography
+                            className={classes.nameText}
+                            variant="h6"
+                        >
+                            Tamaz Leladze
+                        </Typography>
+                        
+                        <Divider />
+                        
+                        <div style={{marginTop: 20, textAlign: 'center'}}>
+                            <StyledBadge className={classes.margin} badgeContent={99} color="primary">
+                                <Button
+                                    onClick={() => this.props.history.push('/hotels/create')}
+                                    variant="outlined"
+                                    color="primary"
+                                >
+                                    {{
+                                        en: 'My Hotels',
+                                        ge: 'ჩემი სასტუმროები'
+                                    }[this.props.settingsReducer.language]} 
+                                </Button>
+                            </StyledBadge>
+                            <StyledBadge className={classes.margin} badgeContent={99} color="primary">
+                                <Button
+                                    onClick={() => this.props.history.push('/tours/create')}
+                                    variant="outlined"
+                                    color="primary"
+                                >
+                                    {{
+                                        en: 'My Tours',
+                                        ge: 'ჩემი ტურები'
+                                    }[this.props.settingsReducer.language]} 
+                                </Button>
+                            </StyledBadge>
+                            <StyledBadge className={classes.margin} badgeContent={99} color="primary">
+                                <Button
+                                    onClick={() => this.props.history.push('/cars/create')}
+                                    variant="outlined"
+                                    color="primary"
+                                >
+                                    {{
+                                        en: 'My Cars',
+                                        ge: 'ჩემი ტრანსპორტი'
+                                    }[this.props.settingsReducer.language]} 
+                                </Button>
+                            </StyledBadge>
+                        </div>
+                    </div>
+                    <Divider className={classes.profileDivider} />
+                </>
+            )
+        }
 
         return (
-            <nav className={rootClassName}>
+            <nav className={classes.root}>
                 <div className={classes.logoWrapper}>
                     <Link
                         className={classes.logoLink}
@@ -78,79 +150,27 @@ class Sidebar extends Component {
                     </Link>
                 </div>
                 <Divider className={classes.logoDivider} />
-                <div className={classes.profile}>
-                    <Link to="/account">
-                        <Avatar
-                            alt="Roman Kutepov"
-                            className={classes.avatar}
-                            src="https://ca.slack-edge.com/T88TYEF4L-UAXE19KS9-bb5e12c43b7f-512"
-                        />
-                    </Link>
-                    <Typography
-                        className={classes.nameText}
-                        variant="h6"
-                    >
-                        Tamaz Leladze
-                    </Typography>
-                    
-                    <Divider />
-                    
-                    <div style={{marginTop: 20, textAlign: 'center'}}>
-                        <StyledBadge className={classes.margin} badgeContent={99} color="primary">
-                            <Button
-                                onClick={() => this.props.history.push('/hotels/create')}
-                                variant="outlined"
-                                color="primary"
-                            >
-                                {{
-                                    en: 'My Hotels',
-                                    ge: 'ჩემი სასტუმროები'
-                                }[this.props.settingsReducer.language]} 
-                            </Button>
-                        </StyledBadge>
-                        <StyledBadge className={classes.margin} badgeContent={99} color="primary">
-                            <Button
-                                onClick={() => this.props.history.push('/tours/create')}
-                                variant="outlined"
-                                color="primary"
-                            >
-                                {{
-                                    en: 'My Tours',
-                                    ge: 'ჩემი ტურები'
-                                }[this.props.settingsReducer.language]} 
-                            </Button>
-                        </StyledBadge>
-                        <StyledBadge className={classes.margin} badgeContent={99} color="primary">
-                            <Button
-                                onClick={() => this.props.history.push('/cars/create')}
-                                variant="outlined"
-                                color="primary"
-                            >
-                                {{
-                                    en: 'My Cars',
-                                    ge: 'ჩემი ტრანსპორტი'
-                                }[this.props.settingsReducer.language]} 
-                            </Button>
-                        </StyledBadge>
-                    </div>
-                </div>
-                <Divider className={classes.profileDivider} />
+                {authenticationReducer.authorized && getProfile()}
                 <List
                     component="div"
                     disablePadding
                     subheader={
                         <ListSubheader className={classes.listSubheader}>
-                            {{en: 'Categories', ge: 'კატეგორიები'}[this.props.settingsReducer.language]}
+                            {{
+                                en: 'Categories',
+                                ge: 'კატეგორიები'
+                            }[this.props.settingsReducer.language]}
                         </ListSubheader>
                     }
                 >
-                    {navigations.map((navigation) => {
+                    {navigations.map((navigation, index) => {
                         return (
                             <ListItem
                                 activeClassName={classes.activeListItem}
                                 className={classes.listItem}
-                                component={NavLink}
+                                component={Foo}
                                 to={navigation.to}
+                                key={index}
                             >
                                 <ListItemIcon className={classes.listItemIcon}>
                                     {navigation.icon}
@@ -164,44 +184,21 @@ class Sidebar extends Component {
                     })}
                 </List>
                 <Divider className={classes.listDivider} />
-                {/* <List
-                    component="div"
-                    disablePadding
-                    subheader={
-                        <ListSubheader className={classes.listSubheader}>
-                            Support
-                        </ListSubheader>
-                    }
-                >
-                    <ListItem
-                        className={classes.listItem}
-                        component="a"
-                        href="https://devias.io/contact-us"
-                        target="_blank"
-                    >
-                        <ListItemIcon className={classes.listItemIcon}>
-                            <InfoIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            classes={{ primary: classes.listItemText }}
-                            primary="Customer support"
-                        />
-                    </ListItem>
-                </List> */}
             </nav>
         );
     }
-}
+};
 
 Sidebar.propTypes = {
     className: PropTypes.string,
     classes: PropTypes.object.isRequired
-}
+};
 
 const mapStateToProps = (state) => {
     return {
-        settingsReducer: state.settingsReducer
+        settingsReducer: state.settingsReducer,
+        authenticationReducer: state.authenticationReducer
     }
-}
+};
 
-export default connect(mapStateToProps)(withStyles(styles)(Sidebar));
+export default connect(mapStateToProps)(withRouter((withStyles(styles)(Sidebar))));

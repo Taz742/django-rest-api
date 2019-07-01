@@ -1,6 +1,5 @@
-from rest_framework import serializers
+from rest_framework import serializers, validators
 from django.contrib.auth import get_user_model
-from rest_framework.validators import UniqueValidator
 from .models import User, Profile
 
 
@@ -14,22 +13,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ("first_name", "last_name", "mobile")
         
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    email = CustomEmailSerializer(validators=[UniqueValidator(queryset=User.objects.all())])
-    profile = UserProfileSerializer(many=False, read_only=True)
-    cars_count = serializers.IntegerField(default=0)
+    email = CustomEmailSerializer(validators=[validators.UniqueValidator(queryset=User.objects.all())])
+    profile = UserProfileSerializer(many=False)
+    cars_count = serializers.IntegerField(default=0, read_only=True)
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
+        profile = validated_data.pop("profile")
+        password = validated_data.pop("password")
         user = User.objects.create(**validated_data)
         user.set_password(password)
         user.save()
 
-        profile = Profile.objects.create(user=user)
+        profile = Profile.objects.create(user=user, **profile)
         profile.save()
 
         return user

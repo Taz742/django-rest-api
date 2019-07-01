@@ -21,6 +21,12 @@ const useStyles = makeStyles({
 export default function MediaCard(props) {
 	const classes = useStyles();
 
+	const { car, language } = props;
+
+	function getDescription() {
+		return car[`description_${language}`];
+	}
+
 	return (
 		<Card className={classes.card}>
 			<CardActionArea>
@@ -31,10 +37,10 @@ export default function MediaCard(props) {
 				/>
 				<CardContent>
 					<Typography gutterBottom variant="h5" component="h2">
-						Lizard
+						{car.title}
           			</Typography>
 					<Typography variant="body2" color="textSecondary" component="p" noWrap={true}>
-						{props.product.description}
+						{`${car[`description_${language}`]}`}
 					</Typography>
 				</CardContent>
 			</CardActionArea>

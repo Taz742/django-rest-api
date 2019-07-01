@@ -1,11 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+
+// material components
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import MediaCard from './card';
 import Button from '@material-ui/core/Button';
-import { Dashboard as DashboardLayout } from '../../layouts';
+
+// redux
 import { connect } from 'react-redux';
+import { GetCars } from '../../redux/actions';
+
+// helper components
+import { Dashboard as DashboardLayout } from '../../layouts';
+import MediaCard from './card';
+import Loading from '../../components/loading';
 
 const styles = theme => ({
     root: {
@@ -13,85 +22,74 @@ const styles = theme => ({
     },
     layout: {
         width: 'auto',
-        padding: 25,
-        [theme.breakpoints.up(1100 + theme.spacing(3 * 2))]: {
-            // marginLeft: 'auto',
-            // marginRight: 'auto',
-        },
-        overflow: 'hidden',
+        padding: 5,
         paddingBottom: theme.spacing(3)
     },
 });
 
-class Cars extends React.Component {
-    state = {
-        searchValue: '',
-    };
+function Cars(props) {
+    const {
+        classes,
+        settingsReducer,
+        carsReducer
+    } = props;
 
-    render() {
-        const {
-            classes,
-            settingsReducer
-        } = this.props;
+    React.useEffect(() => {
+        props.getCars();
+    }, []);
 
-        const cards = () => (
-            <Grid container spacing={3}>
-                {[{
-                    description: 'a',
-                }, {
-                    description: 'b',
-                }, {
-                    description: 'fafdsfdsjfidshofiudshufhdsfiuhsdfunhdsufndsfkdsnfkdsdf',
-                }, {
-                    description: 'c',
-                }, {
-                    description: 'fafdsfdsjfidshofiudshufhdsfiuhsdfunhdsufndsfkdsnfkdsdf1313',
-                }, {
-                    description: 'faf',
-                }, {
-                    description: 'fafdsfdsjfidshofiudshufhdsfiuhsdfunhdsufnd',
-                }, {
-                    description: '13213',
-                }, ].map((product) => {
-                    return (
-                        <Grid item key={product.description} sm={6} md={3} lg={3} xs={12}>
-                            <MediaCard product={product} />
-                        </Grid>
-                    )
-                })}
-            </Grid>
-        )
-
-        return (
-            <DashboardLayout
-                title={{
-                    en: 'Cars',
-                    ge: 'ტრანსპორტი'
-                }[settingsReducer.language]}
-            >
-                <div className={classes.layout}>
-                    <Button
-                        onClick={() => this.props.history.push('/cars/create')}
-                        variant="contained"
-                        color="primary"
-                    >
-                        Add
-                    </Button>
-                    <div style={{marginTop: 20}}>{cards()}</div>
+    return (
+        <DashboardLayout
+            title={{
+                en: 'Cars',
+                ge: 'ტრანსპორტი'
+            }[settingsReducer.language]}
+        >
+            <div>
+                <Button
+                    onClick={() => props.history.push('/cars/create')}
+                    variant="contained"
+                    color="primary"
+                >
+                    Add
+                </Button>
+                <div style={{marginTop: 20}}>
+                    {carsReducer.fetching ?
+                        <Loading />
+                        :
+                        <Grid container spacing={3}>
+                            {carsReducer.cars.map((car) => {
+                                return (
+                                    <Grid item key={car.id} sm={6} md={3} lg={3} xs={12}>
+                                        <MediaCard car={car} language={settingsReducer.language} />
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>   
+                    }
                 </div>
-            </DashboardLayout>
-        );
-    }
+            </div>
+        </DashboardLayout>
+    )
 }
 
 Cars.propTypes = {
     classes: PropTypes.object.isRequired,
-}
+};
 
 const mapStateToProps = (state) => {
     return {
         settingsReducer: state.settingsReducer,
+        carsReducer: state.carsReducer,
     }
-}
+};
 
-export default connect(mapStateToProps)(withStyles(styles)(Cars));
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getCars: () => {
+            dispatch(GetCars());
+        }
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Cars)));

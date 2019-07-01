@@ -63,7 +63,7 @@ class Dashboard extends Component {
                     open={isOpen}
                     variant={isMobile ? 'temporary' : 'persistent'}
                 >
-                    <Sidebar className={classes.sidebar} {...this.props} />
+                    <Sidebar className={classes.sidebar} history={this.props.history} />
                 </Drawer>
                 <main
                     className={classNames(classes.content, {

@@ -1,6 +1,11 @@
 import { all, fork, put } from 'redux-saga/effects';
-import { watchLogin } from './authentication';
+
+// actions
 import { UserIsAuthorized } from '../actions';
+
+// watchers
+import { watchLogin } from './authentication';
+import { watchGetCars } from './cars';
 
 function* checkAuthentication() {
     const user = localStorage.getItem("user");
@@ -14,5 +19,6 @@ export default function* sagas() {
     yield all([
         fork(checkAuthentication),
         fork(watchLogin),
+        fork(watchGetCars),
     ]);
 };
