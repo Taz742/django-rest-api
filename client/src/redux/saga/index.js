@@ -4,7 +4,7 @@ import { all, fork, put } from 'redux-saga/effects';
 import { UserIsAuthorized } from '../actions';
 
 // watchers
-import { watchLogin } from './authentication';
+import { watchLogin, watchUpdateProfile } from './authentication';
 import { watchGetCars } from './cars';
 
 function* checkAuthentication() {
@@ -20,5 +20,6 @@ export default function* sagas() {
         fork(checkAuthentication),
         fork(watchLogin),
         fork(watchGetCars),
+        fork(watchUpdateProfile),
     ]);
 };

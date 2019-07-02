@@ -1,11 +1,16 @@
 import React from 'react';
 import { withRouter, Route, Switch, Redirect } from 'react-router-dom';
+
+// layout
 import { Dashboard as DashboardLayout } from './layouts';
+
+// views
 import Cars from './views/Cars';
-import Account from './views/account';
+import Account from './views/Account';
 import SignIn from './views/SignIn';
 import SignUp from './views/SignUp';
 
+// redux
 import { connect } from 'react-redux';
 
 function App(props) {
@@ -26,13 +31,7 @@ function App(props) {
                         </DashboardLayout>
                     )
                 }} />
-                <Route exact path="/account" render={(props) => {
-                    return (
-                        <DashboardLayout {...props} title={{en: 'Account', ge: 'ჩემი გვერდი'}[settingsReducer.language]}>
-                            <Account {...props} />
-                        </DashboardLayout>
-                    )
-                }} />
+                <Route exact path="/account" component={Account} />
                 <Route exact path="/sign-in" component={SignIn} />
                 <Route exact path="/sign-up" component={SignUp}  />
             </Switch>

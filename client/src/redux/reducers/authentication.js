@@ -1,4 +1,4 @@
-import { USER_IS_AUTHORIZED, LOG_IN_FETCHING } from '../actions';
+import { USER_IS_AUTHORIZED, LOG_IN_FETCHING, PROFILE_UPDATED, UPDATE_PROFILE_FETCHING } from '../actions';
 
 const defaultState = {
     authorized: false,
@@ -7,7 +7,7 @@ const defaultState = {
     email: "",
     profile: {
 
-    }
+    },
 };
 
 export const AuthenticationReducer = (state = defaultState, action) => {
@@ -30,7 +30,24 @@ export const AuthenticationReducer = (state = defaultState, action) => {
             }
         }
 
+        case PROFILE_UPDATED: {
+            const { profile } = action.payload;
+
+            return {
+                ...state,
+                profile,
+                updateProfileFetching: false,
+            }
+        }
+
+        case UPDATE_PROFILE_FETCHING: {
+            return {
+                ...state,
+                updateProfileFetching: true,
+            }
+        }
+
         default:
             return state
     }
-}
+};

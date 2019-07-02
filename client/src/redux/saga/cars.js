@@ -10,7 +10,7 @@ function* getCars(action) {
     yield delay(500);
 
     const {
-        currentlyLogedUser
+        currentlyLogedUser = null
     } = action.payload;
 
     try {

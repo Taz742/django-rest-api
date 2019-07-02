@@ -9,17 +9,18 @@ class CustomEmailSerializer(serializers.EmailField):
         return super(CustomEmailSerializer, self).to_internal_value(data)
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Profile
-        fields = ("first_name", "last_name", "mobile")
+        fields = ("id", "first_name", "last_name", "mobile")
         
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     email = CustomEmailSerializer(validators=[validators.UniqueValidator(queryset=User.objects.all())])
-    profile = UserProfileSerializer(many=False)
+    profile = ProfileSerializer(many=False)
     cars_count = serializers.IntegerField(default=0, read_only=True)
 
     def create(self, validated_data):
@@ -33,6 +34,16 @@ class UserSerializer(serializers.ModelSerializer):
         profile.save()
 
         return user
+
+    def update(self, validated_data):
+        email = validated_data["email"]
+        profile_data = validated_data["profile"]
+
+        user = User.objects.get(email=email)
+        profile = user.profile
+        profile.first_name = profile_data.get("first_name", profile.first_name)
+        profile.last_name = profile_data.get("last_name", profile.last_name)
+        profile.mobile = profile_data.get("mobile", profile.mobile)
 
     class Meta:
         model = User

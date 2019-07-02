@@ -1,4 +1,6 @@
 import React from 'react';
+
+// material ui
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -40,7 +42,7 @@ export default function MediaCard(props) {
 						{car.title}
           			</Typography>
 					<Typography variant="body2" color="textSecondary" component="p" noWrap={true}>
-						{`${car[`description_${language}`]}`}
+						{getDescription()}
 					</Typography>
 				</CardContent>
 			</CardActionArea>

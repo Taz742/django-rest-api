@@ -1,5 +1,16 @@
 import { takeLatest, call, put, delay } from 'redux-saga/effects';
-import { LOG_IN, UserIsAuthorized, UserLoginFetching } from '../actions';
+
+// actions
+import {
+    LOG_IN,
+    UserIsAuthorized,
+    UserLoginFetching,
+    UPDATE_PROFILE,
+    ProfileUpdated,
+    UpdateProfileFetching,
+} from '../actions';
+
+// utils
 import { Http } from '../../utils/http';
 
 function* login(action) {
@@ -33,8 +44,33 @@ function* login(action) {
     } catch(err) {
 
     }
-}
+};
 
 export function* watchLogin() {
     yield takeLatest(LOG_IN, login);
-}
+};
+
+
+function* updateProfile(action) {
+    try {
+        yield call(function*() {
+            yield put(UpdateProfileFetching());
+        });
+
+        yield delay(500);
+
+        const { profile } = action.payload;
+
+        const { status, data } = yield call(Http.put, `/api/users/profile/${profile.id}`, profile);
+
+        if (status === 200) {
+            yield put(ProfileUpdated(data));
+        }
+    } catch(err) {
+
+    }
+};
+
+export function* watchUpdateProfile() {
+    yield takeLatest(UPDATE_PROFILE, updateProfile);
+};

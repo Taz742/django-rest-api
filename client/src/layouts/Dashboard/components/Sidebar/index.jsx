@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, NavLink, withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 // Externals
 import PropTypes from 'prop-types';
@@ -56,22 +56,24 @@ const StyledBadge = withStyles((theme) => ({
     },
 }))(Badge);
 
-const Foo = React.forwardRef((props, ref) => {
-    return (
-        <div>
-            <NavLink {...props} ref={ref} />
-        </div>
-    )
-});
-
 class Sidebar extends Component {
     render() {
         const {
             classes,
-            authenticationReducer
+            authenticationReducer,
+            settingsReducer
         } = this.props;
 
         const getProfile = () => {
+            const {
+                authorized,
+                profile
+            } = authenticationReducer;
+
+            if (!authorized) {
+                return null;
+            }
+
             return (
                 <>
                     <div className={classes.profile}>
@@ -86,7 +88,7 @@ class Sidebar extends Component {
                             className={classes.nameText}
                             variant="h6"
                         >
-                            Tamaz Leladze
+                            {`${profile.first_name} ${profile.last_name}`}
                         </Typography>
                         
                         <Divider />
@@ -101,7 +103,7 @@ class Sidebar extends Component {
                                     {{
                                         en: 'My Hotels',
                                         ge: 'ჩემი სასტუმროები'
-                                    }[this.props.settingsReducer.language]} 
+                                    }[settingsReducer.language]} 
                                 </Button>
                             </StyledBadge>
                             <StyledBadge className={classes.margin} badgeContent={99} color="primary">
@@ -113,7 +115,7 @@ class Sidebar extends Component {
                                     {{
                                         en: 'My Tours',
                                         ge: 'ჩემი ტურები'
-                                    }[this.props.settingsReducer.language]} 
+                                    }[settingsReducer.language]} 
                                 </Button>
                             </StyledBadge>
                             <StyledBadge className={classes.margin} badgeContent={99} color="primary">
@@ -125,7 +127,7 @@ class Sidebar extends Component {
                                     {{
                                         en: 'My Cars',
                                         ge: 'ჩემი ტრანსპორტი'
-                                    }[this.props.settingsReducer.language]} 
+                                    }[settingsReducer.language]} 
                                 </Button>
                             </StyledBadge>
                         </div>
@@ -150,7 +152,7 @@ class Sidebar extends Component {
                     </Link>
                 </div>
                 <Divider className={classes.logoDivider} />
-                {authenticationReducer.authorized && getProfile()}
+                {getProfile()}
                 <List
                     component="div"
                     disablePadding
@@ -159,16 +161,16 @@ class Sidebar extends Component {
                             {{
                                 en: 'Categories',
                                 ge: 'კატეგორიები'
-                            }[this.props.settingsReducer.language]}
+                            }[settingsReducer.language]}
                         </ListSubheader>
                     }
                 >
                     {navigations.map((navigation, index) => {
                         return (
                             <ListItem
-                                activeClassName={classes.activeListItem}
+                                activeclassname={classes.activeListItem}
                                 className={classes.listItem}
-                                component={Foo}
+                                component={Link}
                                 to={navigation.to}
                                 key={index}
                             >
@@ -177,7 +179,7 @@ class Sidebar extends Component {
                                 </ListItemIcon>
                                 <ListItemText
                                     classes={{ primary: classes.listItemText }}
-                                    primary={navigation[this.props.settingsReducer.language]}
+                                    primary={navigation[settingsReducer.language]}
                                 />
                             </ListItem>
                         )
