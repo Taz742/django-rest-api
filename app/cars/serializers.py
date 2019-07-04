@@ -8,9 +8,17 @@ class CarsCategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CarSerializer(serializers.ModelSerializer):
+class FullDetailCarSerializer(serializers.ModelSerializer):
     category = CarsCategorySerializer()
 
     class Meta:
         model = Car
         exclude = ('user',)
+
+
+class SmallDetailCarSerializer(serializers.ModelSerializer):
+    category = CarsCategorySerializer()
+
+    class Meta:
+        model = Car
+        fields = ("id", "description_en", "description_ge", "category")

@@ -18,7 +18,6 @@ import {
     ListSubheader,
     Typography,
     Button,
-    Badge
 } from '@material-ui/core';
 
 // Material icons
@@ -32,6 +31,7 @@ import styles from './styles';
 
 //redux
 import { connect } from 'react-redux';
+import { UserIsUnauthorized } from '../../../../redux/actions';
 
 const navigations = [{
     en: 'Tours',
@@ -50,12 +50,6 @@ const navigations = [{
     icon: <DashboardIcon />
 }];
 
-const StyledBadge = withStyles((theme) => ({
-    badge: {
-        top: '50%',
-    },
-}))(Badge);
-
 class Sidebar extends Component {
     render() {
         const {
@@ -67,15 +61,45 @@ class Sidebar extends Component {
         const getProfile = () => {
             const {
                 authorized,
-                profile
+                user: {
+                    profile
+                }
             } = authenticationReducer;
 
             if (!authorized) {
-                return null;
+                return (
+                    <>
+                        <ListSubheader className={classes.listSubheader}>
+                            {{
+                                en: 'Profile',
+                                ge: 'მონაცემები'
+                            }[settingsReducer.language]}
+                        </ListSubheader>
+                        <div className={classes.profile}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => this.props.history.push('/sign-in')} fullWidth
+                            >
+                                {{
+                                    en: 'Sign in'
+                                }}
+                            </Button>
+                            <Button variant="outlined" color="primary" onClick={() => this.props.history.push('/sign-up')} style={{marginTop: 10}} fullWidth>Sign up</Button>
+                        </div>
+                        <Divider className={classes.profileDivider} />
+                    </>
+                )
             }
 
             return (
                 <>
+                    <ListSubheader className={classes.listSubheader}>
+                        {{
+                            en: 'Profile',
+                            ge: 'მონაცემები'
+                        }[settingsReducer.language]}
+                    </ListSubheader>
                     <div className={classes.profile}>
                         <Link to="/account">
                             <Avatar
@@ -90,47 +114,43 @@ class Sidebar extends Component {
                         >
                             {`${profile.first_name} ${profile.last_name}`}
                         </Typography>
-                        
-                        <Divider />
-                        
-                        <div style={{marginTop: 20, textAlign: 'center'}}>
-                            <StyledBadge className={classes.margin} badgeContent={99} color="primary">
-                                <Button
-                                    onClick={() => this.props.history.push('/hotels/create')}
-                                    variant="outlined"
-                                    color="primary"
-                                >
-                                    {{
-                                        en: 'My Hotels',
-                                        ge: 'ჩემი სასტუმროები'
-                                    }[settingsReducer.language]} 
-                                </Button>
-                            </StyledBadge>
-                            <StyledBadge className={classes.margin} badgeContent={99} color="primary">
-                                <Button
-                                    onClick={() => this.props.history.push('/tours/create')}
-                                    variant="outlined"
-                                    color="primary"
-                                >
-                                    {{
-                                        en: 'My Tours',
-                                        ge: 'ჩემი ტურები'
-                                    }[settingsReducer.language]} 
-                                </Button>
-                            </StyledBadge>
-                            <StyledBadge className={classes.margin} badgeContent={99} color="primary">
-                                <Button
-                                    onClick={() => this.props.history.push('/cars/create')}
-                                    variant="outlined"
-                                    color="primary"
-                                >
-                                    {{
-                                        en: 'My Cars',
-                                        ge: 'ჩემი ტრანსპორტი'
-                                    }[settingsReducer.language]} 
-                                </Button>
-                            </StyledBadge>
-                        </div>
+                        <Button variant="outlined" color="primary" onClick={this.props.logout} style={{marginTop: 10}}>Log Out</Button>
+                    </div>
+                    <Divider className={classes.profileDivider} />
+                    <div style={{textAlign: 'center', display: 'flex', flexWrap: 'wrap'}}>
+                        <Button
+                            onClick={() => this.props.history.push('/hotels/create')}
+                            variant="contained"
+                            color="primary"
+                            style={{width: '100%'}}
+                        >
+                            {{
+                                en: 'My Hotels',
+                                ge: 'ჩემი სასტუმროები'
+                            }[settingsReducer.language]} 
+                        </Button>
+                        <Button
+                            onClick={() => this.props.history.push('/tours/create')}
+                            variant="contained"
+                            color="primary"
+                            style={{width: '100%', marginTop: 10}}
+                        >
+                            {{
+                                en: 'My Tours',
+                                ge: 'ჩემი ტურები'
+                            }[settingsReducer.language]} 
+                        </Button>
+                        <Button
+                            onClick={() => this.props.history.push('/cars/create')}
+                            variant="contained"
+                            color="primary"
+                            style={{width: '100%', marginTop: 10}}
+                        >
+                            {{
+                                en: 'My Cars',
+                                ge: 'ჩემი ტრანსპორტი'
+                            }[settingsReducer.language]} 
+                        </Button>
                     </div>
                     <Divider className={classes.profileDivider} />
                 </>
@@ -203,4 +223,12 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps)(withRouter((withStyles(styles)(Sidebar))));
+const mapDispatchToProps = (dispatch) => {
+    return {
+        logout: () => {
+            dispatch(UserIsUnauthorized());
+        }
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter((withStyles(styles)(Sidebar))));

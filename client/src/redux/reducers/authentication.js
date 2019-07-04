@@ -1,23 +1,40 @@
-import { USER_IS_AUTHORIZED, LOG_IN_FETCHING, PROFILE_UPDATED, UPDATE_PROFILE_FETCHING } from '../actions';
+import {
+    USER_IS_AUTHORIZED,
+    LOG_IN_FETCHING,
+    PROFILE_UPDATED,
+    UPDATE_PROFILE_FETCHING,
+    USER_IS_UNAUTHORIZED
+} from '../actions';
 
 const defaultState = {
     authorized: false,
     fetching: false,
-    id: -1,
-    email: "",
-    profile: {
-
+    updateProfileFetching: false,
+    user: {
+        id: -1,
+        email: "",
+        profile: {}
     },
 };
 
 export const AuthenticationReducer = (state = defaultState, action) => {
     switch (action.type) {
         case USER_IS_AUTHORIZED: {
-            const { user } = action.payload;
+            const {
+                user,
+                access_token,
+                refresh_token
+            } = action.payload;
+
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("acess_token", access_token);
+            localStorage.setItem("refresh_token", refresh_token);
 
             return {
                 ...state,
-                ...user,
+                user,
+                access_token,
+                refresh_token,
                 authorized: true,
                 fetching: false,
             }
@@ -35,8 +52,11 @@ export const AuthenticationReducer = (state = defaultState, action) => {
 
             return {
                 ...state,
-                profile,
                 updateProfileFetching: false,
+                user: {
+                    ...state.user,
+                    profile
+                }
             }
         }
 
@@ -44,6 +64,16 @@ export const AuthenticationReducer = (state = defaultState, action) => {
             return {
                 ...state,
                 updateProfileFetching: true,
+            }
+        }
+
+        case USER_IS_UNAUTHORIZED: {
+            localStorage.removeItem("user");
+            localStorage.removeItem("acess_token");
+            localStorage.removeItem("refresh_token");
+
+            return {
+                ...defaultState
             }
         }
 

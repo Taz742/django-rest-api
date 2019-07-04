@@ -19,8 +19,8 @@ export const LogIn = (email, password) => {
     return makeAction(LOG_IN, { email, password });
 };
 export const USER_IS_AUTHORIZED = 'USER_IS_AUTHORIZED';
-export const UserIsAuthorized = (user) => {
-    return makeAction(USER_IS_AUTHORIZED, { user });
+export const UserIsAuthorized = (data) => {
+    return makeAction(USER_IS_AUTHORIZED, data);
 };
 export const USER_IS_UNAUTHORIZED = 'USER_IS_UNAUTHORIZED';
 export const UserIsUnauthorized = () => {

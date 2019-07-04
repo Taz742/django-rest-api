@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import Car
-from .serializers import CarSerializer
+from .serializers import SmallDetailCarSerializer, FullDetailCarSerializer
 
 
 class CarsPagination(pagination.PageNumberPagination):
@@ -24,7 +24,7 @@ class CarsPagination(pagination.PageNumberPagination):
 
 
 class ListCarsView(generics.ListAPIView):
-    serializer_class = CarSerializer
+    serializer_class = SmallDetailCarSerializer
     permission_classes = [permissions.AllowAny]
     authentication_classes = [BasicAuthentication]
     pagination_class = CarsPagination
@@ -32,10 +32,15 @@ class ListCarsView(generics.ListAPIView):
 
 
 class ListOfCurrentlyLogedUserCarsView(generics.ListCreateAPIView):
-    serializer_class = CarSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     pagination_class = CarsPagination
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SmallDetailCarSerializer
+        else:
+            return FullDetailCarSerializer
 
     def get_queryset(self):
         """

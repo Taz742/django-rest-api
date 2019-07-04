@@ -88,8 +88,14 @@ function Account({classes, settingsReducer, authenticationReducer, ...props}) {
     const [profile, setProfile] = React.useState({});
 
     React.useEffect(() => {
-        setProfile(authenticationReducer.profile);
-    }, [authenticationReducer]);
+        setProfile(authenticationReducer.user.profile);
+    }, [authenticationReducer.user.profile]);
+
+    React.useEffect(() => {
+        if (!authenticationReducer.authorized) {
+            props.history.push('/');
+        }
+    }, [authenticationReducer.authorized]);
 
     function handleProfileDetailChange(key, value) {
         setProfile({
@@ -108,11 +114,12 @@ function Account({classes, settingsReducer, authenticationReducer, ...props}) {
             <div className={classes.layout}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={4} lg={4}>
-                        <Profile profile={authenticationReducer.profile} language={settingsReducer.language} />
+                        <Profile profile={authenticationReducer.user.profile} language={settingsReducer.language} />
                     </Grid>
                     <Grid item xs={12} md={8} lg={8}>
                         <Details
                             profile={profile}
+                            authenticationReducer={authenticationReducer}
                             language={settingsReducer.language}
                             handleChange={handleProfileDetailChange}
                             onSave={() => {
@@ -139,6 +146,6 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(UpdateProfile(profile));
         }
     }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Account));

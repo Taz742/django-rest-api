@@ -148,12 +148,6 @@ class Topbar extends Component {
                 <MenuItem value="ge">GE</MenuItem>
               </Select>
             </IconButton>
-            <IconButton
-              className={classes.signOutButton}
-              onClick={this.handleSignOut}
-            >
-              <InputIcon />
-            </IconButton>
           </Toolbar>
         </div>
       </Fragment>

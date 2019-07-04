@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import check_password
 
 from rest_framework import generics, permissions, status, exceptions
 from rest_framework.response import Response
+from rest_framework.authentication import BasicAuthentication
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -21,6 +22,7 @@ class LoginView(generics.GenericAPIView):
     """
     serializer_class = LoginSerializer
     permission_classes = [permissions.AllowAny]
+    authentication_classes = [BasicAuthentication]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -47,6 +49,7 @@ class RegistrationView(generics.GenericAPIView):
     """
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
+    authentication_classes = [BasicAuthentication]
 
     def post(self, request, *args, **kwargs):
         try:

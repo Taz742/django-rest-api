@@ -10,13 +10,20 @@ import {
     Button
 } from '@material-ui/core';
 
+// components
+import Loading from '../../../components/loading';
+
 const styles = {
     textField: {
 
     }
 };
 
-function Details({profile, classes, language, handleChange, onSave, ...props}) {
+function Details({classes, authenticationReducer, profile, language, handleChange, onSave, ...props}) {
+    const {
+        updateProfileFetching,
+    } = authenticationReducer;
+
     return (
         <Paper elevation={0} style={{border: '1px solid #DFE3E8'}}>
             <Typography variant="h6" style={{margin: 20}}>
@@ -41,6 +48,7 @@ function Details({profile, classes, language, handleChange, onSave, ...props}) {
                     margin="normal"
                     variant="outlined"
                     fullWidth
+                    disabled={updateProfileFetching}
                 />
                 <TextField
                     id="outlined-name"
@@ -56,12 +64,13 @@ function Details({profile, classes, language, handleChange, onSave, ...props}) {
                     margin="normal"
                     variant="outlined"
                     fullWidth
+                    disabled={updateProfileFetching}
                 />
                 <TextField
                     id="outlined-name"
                     label={`${{
-                        en: "Mobile",
-                        ge: "ტელეფონი"
+                        en: "Phone number",
+                        ge: "მობილური"
                     }[language]}`}
                     className={classes.textField}
                     value={profile.mobile}
@@ -71,20 +80,25 @@ function Details({profile, classes, language, handleChange, onSave, ...props}) {
                     margin="normal"
                     variant="outlined"
                     fullWidth
+                    disabled={updateProfileFetching}
                 />
             </div>
             <Divider />
             <div style={{margin: 20}}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={onSave}
-                >
-                    {`${{
-                        en: "Save Changes",
-                        ge: "მონაცემების დამახსოვრება"
-                    }[language]}`}
-                </Button>
+                {updateProfileFetching ?
+                    <Loading />
+                    :
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={onSave}
+                    >
+                        {`${{
+                            en: "Save Changes",
+                            ge: "მონაცემების დამახსოვრება"
+                        }[language]}`}
+                    </Button>
+                }
             </div>
         </Paper>
     )
