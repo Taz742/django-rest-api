@@ -36,7 +36,7 @@ function Cars(props) {
 
     React.useEffect(() => {
         props.getCars();
-    }, []);
+    }, []); // likes componentDidMount
 
     return (
         <DashboardLayout

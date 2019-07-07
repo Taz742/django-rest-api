@@ -72,20 +72,33 @@ class Sidebar extends Component {
                         <ListSubheader className={classes.listSubheader}>
                             {{
                                 en: 'Profile',
-                                ge: 'მონაცემები'
+                                ge: 'მომხმარებელი'
                             }[settingsReducer.language]}
                         </ListSubheader>
                         <div className={classes.profile}>
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => this.props.history.push('/sign-in')} fullWidth
+                                onClick={() => this.props.history.push('/sign-in')}
+                                fullWidth
                             >
                                 {{
-                                    en: 'Sign in'
-                                }}
+                                    en: 'Sign in',
+                                    ge: 'შესვლა'
+                                }[settingsReducer.language]}
                             </Button>
-                            <Button variant="outlined" color="primary" onClick={() => this.props.history.push('/sign-up')} style={{marginTop: 10}} fullWidth>Sign up</Button>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => this.props.history.push('/sign-up')}
+                                style={{marginTop: 10}}
+                                fullWidth
+                            >
+                            {{
+                                en: 'Sign up',
+                                ge: 'რეგოსტრაცია'
+                            }[settingsReducer.language]}
+                            </Button>
                         </div>
                         <Divider className={classes.profileDivider} />
                     </>
@@ -141,7 +154,7 @@ class Sidebar extends Component {
                             }[settingsReducer.language]} 
                         </Button>
                         <Button
-                            onClick={() => this.props.history.push('/cars/create')}
+                            onClick={() => this.props.history.push('/cars/my')}
                             variant="contained"
                             color="primary"
                             style={{width: '100%', marginTop: 10}}

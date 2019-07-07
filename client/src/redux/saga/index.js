@@ -6,6 +6,7 @@ import { UserIsAuthorized } from '../actions';
 // watchers
 import { watchLogin, watchUpdateProfile } from './authentication';
 import { watchGetCars } from './cars';
+import { watchGetMyCars } from './my-cars';
 
 function* checkAuthentication() {
     const user = localStorage.getItem("user");
@@ -27,5 +28,6 @@ export default function* sagas() {
         fork(watchLogin),
         fork(watchGetCars),
         fork(watchUpdateProfile),
+        fork(watchGetMyCars),
     ]);
 };

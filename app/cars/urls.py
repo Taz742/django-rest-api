@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import ListCarsView, ListOfCurrentlyLogedUserCarsView
+from .views import AnyUserListCarsView, CurrentlyLogedUserListCarsView, AdditionalInformationView
 
 
 urlpatterns = [
-    path('', ListCarsView.as_view(), name="list-of-cars"),
-    path('my/', ListOfCurrentlyLogedUserCarsView.as_view(), name="list-of-currently-loged-user-cars"),
+    path('', AnyUserListCarsView.as_view(), name="list-of-cars"),
+    path('my/', CurrentlyLogedUserListCarsView.as_view(), name="list-of-currently-loged-user-cars"),
+    path('additional-information/', AdditionalInformationView.as_view(), name="cars-additional-information")
 ]

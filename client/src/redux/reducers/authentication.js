@@ -27,7 +27,7 @@ export const AuthenticationReducer = (state = defaultState, action) => {
             } = action.payload;
 
             localStorage.setItem("user", JSON.stringify(user));
-            localStorage.setItem("acess_token", access_token);
+            localStorage.setItem("access_token", access_token);
             localStorage.setItem("refresh_token", refresh_token);
 
             return {
@@ -69,7 +69,7 @@ export const AuthenticationReducer = (state = defaultState, action) => {
 
         case USER_IS_UNAUTHORIZED: {
             localStorage.removeItem("user");
-            localStorage.removeItem("acess_token");
+            localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
 
             return {

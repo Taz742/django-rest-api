@@ -22,11 +22,8 @@ import {
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
-  Input as InputIcon
+  // Input as InputIcon
 } from '@material-ui/icons';
-
-// Shared services
-// import { getNotifications } from 'services/notification';
 
 // Component styles
 import styles from './styles';

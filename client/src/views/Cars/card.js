@@ -46,7 +46,7 @@ export default function MediaCard(props) {
 					</Typography>
 				</CardContent>
 			</CardActionArea>
-				<Divider style={{marginLeft: 10, marginRight: 10}} />
+			<Divider style={{marginLeft: 10, marginRight: 10}} />
 			<CardActions>
 				<Button size="small" color="primary">
 					Learn More

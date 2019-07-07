@@ -61,3 +61,21 @@ export const CARS_ERROR = 'CARS_ERROR';
 export const CarsError = (errors) => {
     return makeAction(CARS_ERROR, errors);
 };
+
+// my car actions
+export const GET_MY_CARS = 'GET_MY_CARS';
+export const GetMyCars = () => {
+    return makeAction(GET_MY_CARS);
+};
+export const MY_CARS_FETCHING = 'MY_CARS_FETCHING';
+export const MyCarsFetching = () => {
+    return makeAction(MY_CARS_FETCHING);
+};
+export const MY_CARS_RECEIVED = 'MY_CARS_RECEIVED';
+export const MyCarsReceived = (data) => {
+    return makeAction(MY_CARS_RECEIVED, data);
+};
+export const MY_CARS_ERROR = 'MY_CARS_ERROR';
+export const MyCarsError = (errors) => {
+    return makeAction(MY_CARS_ERROR, errors);
+};
