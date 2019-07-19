@@ -79,3 +79,22 @@ export const MY_CARS_ERROR = 'MY_CARS_ERROR';
 export const MyCarsError = (errors) => {
     return makeAction(MY_CARS_ERROR, errors);
 };
+
+// car additional information actions
+export const GET_CARS_ADDITIONAL_INFORMATION = 'GET_CARS_ADDITIONAL_INFORMATION';
+export const CARS_ADDITIONAL_INFORMATION_FETCHING = 'CARS_ADDITIONAL_INFORMATION_FETCHING';
+export const CARS_ADDITIONAL_INFORMATION_RECEIVED = 'CARS_ADDITIONAL_INFORMATION_RECEIVED';
+export const CARS_ADDITIONAL_INFORMATION_ERROR = 'CARS_ADDITIONAL_INFORMATION_ERROR';
+
+export const GetCarsAdditionalInformation = () => {
+    return makeAction(GET_CARS_ADDITIONAL_INFORMATION);
+};
+export const CarsAdditionalInformationFetching = () => {
+    return makeAction(CARS_ADDITIONAL_INFORMATION_FETCHING);
+};
+export const CarsAdditionalInformationReceived = (data) => {
+    return makeAction(CARS_ADDITIONAL_INFORMATION_RECEIVED, data);
+};
+export const CarsAdditionalInformationError = (error) => {
+    return makeAction(CARS_ADDITIONAL_INFORMATION_ERROR, error);
+};

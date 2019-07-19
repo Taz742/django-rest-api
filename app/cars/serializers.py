@@ -1,29 +1,31 @@
 from rest_framework import serializers
-from .models import Car, CarsCategories, CarsManufacturers
+from users.serializers import UserSerializer
+from .models import Car, Categories, Manufacturers, Has, AdditionalInformation
+from django.db import transaction
 
 
-class CarsCategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = CarsCategories
+        model = Categories
         fields = '__all__'
 
 
-class CarsManufacturerSerializer(serializers.ModelSerializer):
+class ManufacturerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CarsManufacturers
+        model = Manufacturers
         fields = '__all__'
 
 
-class AnyUserListCarsSerializer(serializers.ModelSerializer):
-    category = CarsCategorySerializer()
+class AnyUserCarsListSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
 
     class Meta:
         model = Car
         exclude = ('user',)
 
 
-class CurrentlyLogedUserListCarsSerializer(serializers.ModelSerializer):
-    category = CarsCategorySerializer()
+class CurrentlyLogedUserCarsListSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
 
     class Meta:
         model = Car
@@ -31,5 +33,46 @@ class CurrentlyLogedUserListCarsSerializer(serializers.ModelSerializer):
 
 
 class AdditionalInformationSerializer(serializers.Serializer):
-    categories = CarsCategorySerializer(many=True)
-    manufacturers = CarsManufacturerSerializer(many=True)
+    categories = CategorySerializer(many=True)
+    manufacturers = ManufacturerSerializer(many=True)
+
+
+class WritableHasSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Has
+        fields = '__all__'
+
+
+class WritableAdditionalInformationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdditionalInformation
+        fields = '__all__'
+
+
+class ReadWriteCarSerializer(serializers.ModelSerializer):
+    has = WritableHasSerializer()
+    additional_information = WritableAdditionalInformationSerializer()
+    user = UserSerializer(required=False)
+
+    class Meta:
+        model = Car
+        fields = '__all__'
+
+    def create(self, validated_data):
+        validated_has_data = validated_data.pop("has")
+        validated_additional_information_data = validated_data.pop("additional_information")
+
+        with transaction.atomic():
+            user = self.context["request"].user
+            car = Car.objects.create(**validated_data, user=user)
+            car.save()
+
+            has = Has.objects.create(**validated_has_data, car=car)
+            has.save()
+
+            additional_information = AdditionalInformation(**validated_additional_information_data, car=car)
+            additional_information.save()
+
+            return car

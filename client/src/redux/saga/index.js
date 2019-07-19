@@ -7,6 +7,7 @@ import { UserIsAuthorized } from '../actions';
 import { watchLogin, watchUpdateProfile } from './authentication';
 import { watchGetCars } from './cars';
 import { watchGetMyCars } from './my-cars';
+import { watchGetCarsAdditionalInformation } from './car-additional-information';
 
 function* checkAuthentication() {
     const user = localStorage.getItem("user");
@@ -20,7 +21,7 @@ function* checkAuthentication() {
             refresh_token
         }));
     }
-}
+};
 
 export default function* sagas() {
     yield all([
@@ -29,5 +30,6 @@ export default function* sagas() {
         fork(watchGetCars),
         fork(watchUpdateProfile),
         fork(watchGetMyCars),
+        fork(watchGetCarsAdditionalInformation),
     ]);
 };

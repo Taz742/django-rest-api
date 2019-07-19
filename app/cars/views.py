@@ -5,8 +5,8 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Car, CarsCategories, CarsManufacturers
-from .serializers import AnyUserListCarsSerializer, CurrentlyLogedUserListCarsSerializer, AdditionalInformationSerializer
+from .models import Car, Categories, Manufacturers
+from .serializers import AnyUserCarsListSerializer, CurrentlyLogedUserCarsListSerializer, AdditionalInformationSerializer, ReadWriteCarSerializer
 
 
 class CarsPagination(pagination.PageNumberPagination):
@@ -23,11 +23,11 @@ class CarsPagination(pagination.PageNumberPagination):
         })
 
 
-class AnyUserListCarsView(generics.ListCreateAPIView):
+class AnyUserListCarsView(generics.ListAPIView):
     """
     This view should return a list of all cars for any user
     """
-    serializer_class = AnyUserListCarsSerializer
+    serializer_class = AnyUserCarsListSerializer
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (BasicAuthentication,)
     pagination_class = CarsPagination
@@ -39,7 +39,7 @@ class CurrentlyLogedUserListCarsView(generics.ListAPIView):
     This view should return a list of all the cars
     for the currently authenticated user.
     """
-    serializer_class = CurrentlyLogedUserListCarsSerializer
+    serializer_class = CurrentlyLogedUserCarsListSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (JWTAuthentication,)
     pagination_class = CarsPagination
@@ -59,10 +59,20 @@ class AdditionalInformationView(generics.ListAPIView):
     
     def get_queryset(self):
         return {
-            "categories": CarsCategories.objects.all(),
-            "manufacturers": CarsManufacturers.objects.all(),
+            "categories": Categories.objects.all(),
+            "manufacturers": Manufacturers.objects.all(),
         }
 
     def list(self, request):
         data = AdditionalInformationSerializer(self.get_queryset()).data
         return Response(data=data)
+
+
+class RetrieveCreateCarView(generics.CreateAPIView, generics.RetrieveAPIView):
+    serializer_class = ReadWriteCarSerializer
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (BasicAuthentication,)
+    queryset = Car.objects.all()
+
+    def get_serializer_context(self):
+        return {"request": self.request}

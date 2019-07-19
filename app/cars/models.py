@@ -8,17 +8,23 @@ from app.models import TimeStampedModel
 User = get_user_model()
 
 
-class CarsCategories(models.Model):
+class Categories(models.Model):
     name_en = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
     name_ge = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
 
+    def __str__(self):
+        return self.name_en
 
-class CarsManufacturers(models.Model):
+
+class Manufacturers(models.Model):
     name_en = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
     name_ge = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
 
+    def __str__(self):
+        return self.name_en
 
-class CarHas(models.Model):
+
+class Has(models.Model):
     heating = models.BooleanField(default=False)
     microphone = models.BooleanField(default=False)
     additional_boot = models.BooleanField(default=False)
@@ -33,9 +39,9 @@ class CarHas(models.Model):
     navigation = models.BooleanField(default=False)
 
 
-class CarAdditionalInformation(models.Model):
-    category = models.ForeignKey(CarsCategories, on_delete=models.CASCADE, blank=False, related_name="car")
-    manufacturer = models.ForeignKey(CarsManufacturers, on_delete=models.CASCADE, blank=False, related_name="car")
+class AdditionalInformation(models.Model):
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE, blank=False, related_name="car")
+    manufacturer = models.ForeignKey(Manufacturers, on_delete=models.CASCADE, blank=False, related_name="car")
 
 
 class Car(TimeStampedModel):
@@ -43,8 +49,8 @@ class Car(TimeStampedModel):
     title = models.CharField(max_length=255, validators=[MinLengthValidator(1)], default="")
     description_en = models.TextField(validators=[MinLengthValidator(1)], default="")
     description_ge = models.TextField(validators=[MinLengthValidator(1)], default="")
-    has = models.ForeignKey(CarHas, on_delete=models.CASCADE, blank=False, related_name="car", default=None)
-    additional_information = models.ForeignKey(CarAdditionalInformation, on_delete=models.CASCADE, blank=False, related_name="car", default=None)
+    has = models.OneToOneField(Has, on_delete=models.CASCADE, blank=False, related_name="car", default=None)
+    additional_information = models.OneToOneField(AdditionalInformation, on_delete=models.CASCADE, blank=False, related_name="car", default=None)
 
     def __str__(self):
         return self.title

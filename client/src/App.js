@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 // layout
-import { Dashboard as DashboardLayout } from './layouts';
+// import { Dashboard as DashboardLayout } from './layouts';
 
 // views
 import Cars from './views/Cars';
@@ -16,9 +16,9 @@ import AddOrUpdateCar from './views/Cars/AddOrUpdate';
 import { connect } from 'react-redux';
 
 function App(props) {
-    const {
-        settingsReducer
-    } = props;
+    // const {
+    //     settingsReducer
+    // } = props;
 
     return (
         <main>
