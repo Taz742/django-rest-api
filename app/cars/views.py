@@ -34,7 +34,7 @@ class AnyUserListCarsView(generics.ListAPIView):
     queryset = Car.objects.all()
 
 
-class CurrentlyLogedUserListCarsView(generics.ListAPIView):
+class CurrentlyLoggedUserListCarsView(generics.ListAPIView):
     """
     This view should return a list of all the cars
     for the currently authenticated user.

@@ -9,16 +9,16 @@ User = get_user_model()
 
 
 class Categories(models.Model):
-    name_en = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
-    name_ge = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
+    name_en = models.CharField(max_length=255, validators=(MinLengthValidator(1),), blank=False, unique=True, default="")
+    name_ge = models.CharField(max_length=255, validators=(MinLengthValidator(1),), blank=False, unique=True, default="")
 
     def __str__(self):
         return self.name_en
 
 
 class Manufacturers(models.Model):
-    name_en = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
-    name_ge = models.CharField(max_length=255, validators=[MinLengthValidator(1)], blank=False, unique=True, default="")
+    name_en = models.CharField(max_length=255, validators=(MinLengthValidator(1),), blank=False, unique=True, default="")
+    name_ge = models.CharField(max_length=255, validators=(MinLengthValidator(1),), blank=False, unique=True, default="")
 
     def __str__(self):
         return self.name_en
@@ -46,9 +46,9 @@ class AdditionalInformation(models.Model):
 
 class Car(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, related_name="cars")
-    title = models.CharField(max_length=255, validators=[MinLengthValidator(1)], default="")
-    description_en = models.TextField(validators=[MinLengthValidator(1)], default="")
-    description_ge = models.TextField(validators=[MinLengthValidator(1)], default="")
+    title = models.CharField(max_length=255, validators=(MinLengthValidator(1),), default="")
+    description_en = models.TextField(validators=(MinLengthValidator(1),), default="")
+    description_ge = models.TextField(validators=(MinLengthValidator(1),), default="")
     has = models.OneToOneField(Has, on_delete=models.CASCADE, blank=False, related_name="car", default=None)
     additional_information = models.OneToOneField(AdditionalInformation, on_delete=models.CASCADE, blank=False, related_name="car", default=None)
 
